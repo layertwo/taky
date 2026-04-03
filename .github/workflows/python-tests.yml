@@ -41,11 +41,17 @@ jobs:
         env:
           COVERAGE_FILE: .coverage.${{ matrix.python-version }}
 
+      - name: Combine coverage data
+        run: |
+          coverage combine
+        env:
+          COVERAGE_FILE: .coverage.${{ matrix.python-version }}
+
       - name: Store coverage file
         uses: actions/upload-artifact@v7
         with:
           name: coverage-${{ matrix.python-version }}
-          path: .coverage.${{ matrix.python-version }}
+          path: .coverage
           include-hidden-files: true
 
   coverage:
