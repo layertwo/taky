@@ -38,14 +38,6 @@ jobs:
       - name: Run tests with coverage
         run: |
           pytest
-        env:
-          COVERAGE_FILE: .coverage.${{ matrix.python-version }}
-
-      - name: Combine coverage data
-        run: |
-          coverage combine
-        env:
-          COVERAGE_FILE: .coverage.${{ matrix.python-version }}
 
       - name: Store coverage file
         uses: actions/upload-artifact@v7
