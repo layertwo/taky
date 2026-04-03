@@ -151,8 +151,8 @@ def make_cert(
     now = dt.now()
 
     # Load CA
-    (ca_crt_path, ca_key_path) = cert_auth
-    (ca_crt, ca_key) = load_certificate(ca_crt_path, ca_key_path)
+    ca_crt_path, ca_key_path = cert_auth
+    ca_crt, ca_key = load_certificate(ca_crt_path, ca_key_path)
 
     private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
 
@@ -292,7 +292,7 @@ class CertificateDatabase:
                 if len(line) != 5:
                     continue
 
-                (status, issued, expires, serial_num, name) = line
+                status, issued, expires, serial_num, name = line
                 issued = dt.fromisoformat(issued)
                 expires = dt.fromisoformat(expires)
                 serial_num = int(serial_num, 16)
