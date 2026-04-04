@@ -71,6 +71,7 @@ addopts = [
 [tool.coverage.run]
 source = ["taky"]
 omit = [
+    "*/taky/cli/*",
     "*/tests/*",
     "*/test_*",
 ]
@@ -88,6 +89,7 @@ exclude_lines = [
     "if TYPE_CHECKING:",
     "@abstractmethod",
     "pass",
+    "except DistributionNotFound:"
 ]
 
 [tool.black]

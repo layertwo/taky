@@ -9,6 +9,7 @@ dist
 
 # Python Coverage
 .coverage
+.coverage.xml
 coverage.json
 htmlcov
 
