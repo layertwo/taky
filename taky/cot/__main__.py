@@ -1,14 +1,15 @@
 # pylint: disable=missing-module-docstring
-import sys
-import signal
-import logging
 import argparse
+import bdb
 import configparser
-import pdb, bdb
+import logging
+import pdb
+import signal
+import sys
 
 from taky import __version__
-from taky.cot import COTServer
 from taky.config import load_config
+from taky.cot import COTServer
 
 
 class SigHdlr:

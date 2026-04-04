@@ -1,10 +1,10 @@
-import os
-import sys
 import configparser
+import os
 import subprocess
+import sys
 
-from taky.config import load_config
 from taky.config import app_config as config
+from taky.config import load_config
 
 
 def systemd_reg(subp):

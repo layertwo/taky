@@ -1,20 +1,19 @@
-import os
-import sys
-import multiprocessing
 import argparse
 import configparser
-import ssl
 import logging
+import multiprocessing
+import os
+import ssl
+import sys
 
 from gunicorn.app.base import BaseApplication
 from gunicorn.workers.sync import SyncWorker
 
 from taky import __version__
-from taky.config import load_config
-from taky.config import app_config
-from taky.util import anc
+from taky.config import app_config, load_config
 from taky.dps import app as taky_dps
 from taky.dps import configure_app
+from taky.util import anc
 
 
 class StandaloneApplication(BaseApplication):

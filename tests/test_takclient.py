@@ -1,9 +1,10 @@
 import os
 import unittest as ut
+
 import mock
 
 from taky import cot
-from taky.config import load_config, app_config
+from taky.config import app_config, load_config
 
 from .test_cot_event import XML_S
 

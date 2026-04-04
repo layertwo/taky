@@ -1,16 +1,15 @@
 import os
 import queue
 import unittest as ut
+import xml.etree.ElementTree as etree
 from datetime import datetime as dt
 from datetime import timedelta
 
-import xml.etree.ElementTree as etree
-
 from taky import cot
-from taky.config import load_config, app_config
+from taky.config import app_config, load_config
 from taky.cot import models
-from taky.config import load_config
-from . import XML_S, XML_EMPTY_MARTI_BC, UnittestTAKClient
+
+from . import XML_EMPTY_MARTI_BC, XML_S, UnittestTAKClient
 
 
 class RouterTestcase(ut.TestCase):

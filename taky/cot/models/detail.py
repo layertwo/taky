@@ -1,4 +1,4 @@
-from .errors import UnmarshalError
+from taky.cot.models.errors import UnmarshalError
 
 
 class Detail:

@@ -1,6 +1,5 @@
+from . import anc, datapackage
 from .stream_framer import StreamFramer
-from . import anc
-from . import datapackage
 
 
 def seconds_to_human(sec):

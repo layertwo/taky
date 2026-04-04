@@ -1,14 +1,14 @@
 # pylint: disable=missing-module-docstring
-import time
 import enum
 import logging
+import time
 from datetime import datetime as dt
 from datetime import timedelta
 
 from taky.config import app_config
-from . import models
-from .client import TAKClient
-from .persistence import build_persistence
+from taky.cot import models
+from taky.cot.client import TAKClient
+from taky.cot.persistence import build_persistence
 
 
 class Destination(enum.Enum):

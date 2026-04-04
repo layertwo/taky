@@ -1,10 +1,10 @@
-import os
 import functools
+import os
 
 import flask
 from flask import Flask
 
-from taky.config import load_config, app_config
+from taky.config import app_config, load_config
 
 application = app = Flask(__name__)
 

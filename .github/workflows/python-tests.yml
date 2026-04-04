@@ -33,6 +33,9 @@ jobs:
       - name: Check code formatting with black
         run: black --check --diff taky/ tests/
 
+      - name: Check import sorting with isort
+        run: isort --check-only --diff taky/ tests/
+
       - name: Run tests with coverage
         run: pytest
         env:

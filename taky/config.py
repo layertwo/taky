@@ -1,6 +1,6 @@
-import os
-import logging
 import configparser
+import logging
+import os
 
 app_config = configparser.ConfigParser(allow_no_value=True)
 

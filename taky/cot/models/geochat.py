@@ -1,11 +1,11 @@
 import enum
-
 import xml.etree.ElementTree as etree
+
 from dateutil.parser import isoparse
 
-from .errors import UnmarshalError
-from .detail import Detail
-from .teams import Teams
+from taky.cot.models.detail import Detail
+from taky.cot.models.errors import UnmarshalError
+from taky.cot.models.teams import Teams
 
 ALL_CHAT_ROOMS = "All Chat Rooms"
 GEOCHAT_TAGS = set(["__chat", "remarks", "link"])
