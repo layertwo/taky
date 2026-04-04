@@ -26,7 +26,10 @@ class TAKUserTestcase(ut.TestCase):
             speed=10.3,
             battery="83",
             device=models.TAKDevice(
-                os="Android", version="10", device="Some Device", platform="python unittest"
+                os="Android",
+                version="10",
+                device="Some Device",
+                platform="python unittest",
             ),
         )
 

@@ -100,8 +100,8 @@ class RouterTestcase(ut.TestCase):
             time=dt.utcnow(),
             start=dt.utcnow(),
             stale=dt.utcnow() + timedelta(1000),
+            detail=gc,
         )
-        evt.detail = gc
 
         self.router.route(None, evt)
 

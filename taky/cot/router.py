@@ -1,4 +1,5 @@
 # pylint: disable=missing-module-docstring
+import dataclasses
 import enum
 import logging
 import time
@@ -138,7 +139,9 @@ class COTRouter:
         # If configured, constrain events to a max TTL
         if self.max_ttl >= 0:
             if evt.persist_ttl > self.max_ttl:
-                evt.stale = dt.utcnow() + timedelta(seconds=self.max_ttl)
+                evt = dataclasses.replace(
+                    evt, stale=dt.utcnow() + timedelta(seconds=self.max_ttl)
+                )
 
         # Special handling for chat messages
         if isinstance(evt.detail, models.GeoChat):
