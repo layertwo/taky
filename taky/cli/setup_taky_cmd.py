@@ -1,7 +1,7 @@
 import os
-import sys
 import shutil
 import socket
+import sys
 
 from taky.config import DEFAULT_CFG
 from taky.config import app_config as config

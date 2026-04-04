@@ -1,15 +1,15 @@
-import os
-import time
-import socket
-import select
-import ssl
 import logging
+import os
+import select
+import socket
+import ssl
+import time
 
 from taky.config import app_config as config
+from taky.cot.client import SocketTAKClient, TAKClient
+from taky.cot.mgmt import MgmtClient
+from taky.cot.router import COTRouter
 from taky.util import anc
-from .router import COTRouter
-from .client import TAKClient, SocketTAKClient
-from .mgmt import MgmtClient
 
 
 def build_srv(ip_addr, port):

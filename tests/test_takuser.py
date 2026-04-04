@@ -6,6 +6,7 @@ import defusedxml.ElementTree as etree
 from dateutil.parser import isoparse
 
 from taky.cot import models
+
 from . import elements_equal
 
 XML_S = b'<event version="2.0" uid="TEST-deadbeef" type="a" how="m-g" time="2021-03-11T15:49:07.138Z" start="2021-03-11T15:49:07.138Z" stale="2021-03-12T15:49:07.138Z"><point lat="0.000000" lon="0.000000" hae="0.0" ce="9999999.0" le="9999999.0"/><detail><takv os="Android" version="10" device="Some Device" platform="python unittest"/><status battery="83"/><uid Droid="JENNY"/><contact callsign="JENNY" endpoint="*:-1:stcp" phone="800-867-5309"/><__group role="Team Member" name="Cyan"/><track course="90.1" speed="10.3"/></detail></event>'

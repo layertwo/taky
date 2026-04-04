@@ -3,7 +3,8 @@ import unittest as ut
 import defusedxml.ElementTree as etree
 
 from taky.cot import models
-from . import elements_equal, XML_S
+
+from . import XML_S, elements_equal
 
 
 class COTTestcase(ut.TestCase):

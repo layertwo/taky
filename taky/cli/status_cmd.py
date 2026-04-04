@@ -1,14 +1,14 @@
+import configparser
+import json
 import os
+import socket
 import sys
 import time
-import socket
-import json
 from collections import namedtuple
-import configparser
 
-from taky.util import pprinttable, seconds_to_human
-from taky.config import load_config
 from taky.config import app_config as config
+from taky.config import load_config
+from taky.util import pprinttable, seconds_to_human
 
 
 def status_reg(subp):

@@ -1,9 +1,8 @@
-import sys
 import argparse
+import sys
 import traceback
 
-from taky import __version__
-from taky import cli
+from taky import __version__, cli
 
 
 def arg_parse():

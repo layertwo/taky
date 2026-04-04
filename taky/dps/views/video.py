@@ -1,7 +1,7 @@
 import os
 import xml.etree.ElementTree as etree
-import defusedxml.ElementTree as defused_et
 
+import defusedxml.ElementTree as defused_et
 from flask import request
 from flask.wrappers import Response
 from werkzeug.utils import secure_filename

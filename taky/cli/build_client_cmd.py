@@ -1,14 +1,14 @@
+import configparser
 import os
-import sys
 import shutil
+import sys
 import tempfile
 import uuid
 import zipfile
-import configparser
 
-from taky.util import datapackage, anc
-from taky.config import load_config
 from taky.config import app_config as config
+from taky.config import load_config
+from taky.util import anc, datapackage
 
 
 def build_client_reg(subp):

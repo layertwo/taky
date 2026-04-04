@@ -5,15 +5,16 @@ Borrowed heavily from mitmproxy
 https://github.com/mitmproxy/mitmproxy
 """
 
-import os
-from datetime import datetime as dt, timedelta
 import ipaddress
+import os
+from datetime import datetime as dt
+from datetime import timedelta
 
 from cryptography import x509
-from cryptography.x509.oid import NameOID, ExtendedKeyUsageOID
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.primitives.serialization import pkcs12, PrivateFormat
+from cryptography.hazmat.primitives.serialization import PrivateFormat, pkcs12
+from cryptography.x509.oid import ExtendedKeyUsageOID, NameOID
 
 from taky.config import app_config
 

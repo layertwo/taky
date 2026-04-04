@@ -1,20 +1,20 @@
 # pylint: disable=missing-module-docstring
-import os
-import time
 import enum
-from datetime import datetime as dt
-from datetime import timedelta
+import logging
+import os
 import socket
 import ssl
-import logging
+import time
 import traceback
-
 import xml.etree.ElementTree as etree
+from datetime import datetime as dt
+from datetime import timedelta
+
 import defusedxml.ElementTree as defused_et
 
 from taky.config import app_config
+from taky.cot import models
 from taky.util import StreamFramer
-from . import models
 
 
 class SSLState(enum.Enum):

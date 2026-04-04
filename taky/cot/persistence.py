@@ -30,15 +30,15 @@ UDP Like Commands
   r - Reply
 """
 
-from datetime import datetime as dt
 import logging
-
 import xml.etree.ElementTree as etree
+from datetime import datetime as dt
+
 import defusedxml.ElementTree as defused_et
 import redis
 
 from taky.config import app_config as config
-from . import models
+from taky.cot import models
 
 KEPT_EVENTS = [
     "a-",

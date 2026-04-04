@@ -1,5 +1,6 @@
-import pytest
 import xml.etree.ElementTree as etree
+
+import pytest
 
 from taky.util.stream_framer import StreamFramer
 

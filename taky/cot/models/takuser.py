@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as etree
 
-from .errors import UnmarshalError
 from .detail import Detail
+from .errors import UnmarshalError
 from .teams import Teams
 
 TAKUSER_TAGS = set(["takv", "contact", "__group"])
