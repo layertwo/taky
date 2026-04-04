@@ -1,4 +1,5 @@
 import xml.etree.ElementTree as etree
+from dataclasses import dataclass
 
 from .detail import Detail
 from .errors import UnmarshalError
@@ -7,22 +8,22 @@ from .teams import Teams
 TAKUSER_TAGS = set(["takv", "contact", "__group"])
 
 
+@dataclass(frozen=True, repr=False)
 class TAKDevice:
-    def __init__(self, os=None, version=None, device=None, platform=None):
-        self.os = os  # pylint: disable=invalid-name
-        self.version = version
-        self.device = device
-        self.platform = platform
+    os: str | None = None  # pylint: disable=invalid-name
+    version: str | None = None
+    device: str | None = None
+    platform: str | None = None
 
     def __repr__(self):
         return "<TAKDevice %s (%s) on %s>" % (self.platform, self.version, self.device)
 
-    @staticmethod
-    def from_elm(elm):
+    @classmethod
+    def from_elm(cls, elm):
         if elm.tag != "takv":
             raise UnmarshalError("Unable to load TAKDevice from %s" % elm.tag)
 
-        return TAKDevice(
+        return cls(
             os=elm.get("os"),
             device=elm.get("device"),
             version=elm.get("version"),
@@ -36,7 +37,6 @@ class TAKDevice:
         ret.set("device", self.device or "")
         ret.set("version", self.version or "")
         ret.set("platform", self.platform or "")
-
         return ret
 
 
