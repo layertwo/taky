@@ -1,4 +1,4 @@
-from .xmldeclstrip import XMLDeclStrip
+from .stream_framer import StreamFramer
 from . import anc
 from . import datapackage
 

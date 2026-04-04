@@ -9,10 +9,11 @@ import ssl
 import logging
 import traceback
 
+import defusedxml.ElementTree as defused_et
 from lxml import etree
 
 from taky.config import app_config
-from taky.util import XMLDeclStrip
+from taky.util import StreamFramer
 from . import models
 
 
@@ -120,7 +121,7 @@ class SocketClient:
                 return
 
             self.feed(data)
-        except etree.XMLSyntaxError as exc:
+        except defused_et.ParseError as exc:
             self.disconnect("XML Syntax Error")
             self.lgr.debug("XML Syntax Error: %s", self, exc_info=exc)
         except BlockingIOError:
@@ -183,9 +184,7 @@ class TAKClient:
         self.log_cot_dir = app_config.get("cot_server", "log_cot")
         self.cot_fp = None
 
-        parser = etree.XMLPullParser(tag="event", resolve_entities=False)
-        parser.feed(b"<root>")
-        self.xdc = XMLDeclStrip(parser)
+        self.framer = StreamFramer()
 
         self.lgr = logging.getLogger(self.__class__.__name__)
 
@@ -279,13 +278,17 @@ class TAKClient:
         """
         Feed the XML data parser with COT data
         """
-        # TODO: Specify maximum element size
-        self.xdc.feed(data)
+        for frame in self.framer.feed(data):
+            # Protocol dispatch: TAK protocol v1 uses 0xBF magic byte (protobuf).
+            # XML frames start with '<'. Stub the protobuf path for future milestone.
+            if frame[0:1] == b"\xbf":
+                pass  # TAK protocol v1 protobuf — future milestone
+                continue
 
-        for _, elm in self.xdc.read_events():
             self.num_rx += 1
             self.last_rx = time.time()
             try:
+                elm = defused_et.fromstring(frame)
                 evt = models.Event.from_elm(elm)
                 self.packet_rx(evt)
 
@@ -301,20 +304,19 @@ class TAKClient:
 
                 self.route(self, evt)
                 self.log_event(evt)
+            except defused_et.ParseError as exc:
+                self.lgr.debug("Unable to parse XML frame: %s", exc, exc_info=exc)
+                continue
             except models.UnmarshalError as exc:
                 self.lgr.debug("Unable to parse Event: %s", exc, exc_info=exc)
-                self.lgr.debug(etree.tostring(elm, pretty_print=True))
                 self.log_event(elm=elm, _exc=traceback.format_exc())
                 continue
             except Exception as exc:  # pylint: disable=broad-except
                 self.lgr.error(
                     "Unhandled exception parsing Event: %s", exc, exc_info=exc
                 )
-                self.lgr.error(etree.tostring(elm, pretty_print=True))
                 self.log_event(elm=elm, _exc=traceback.format_exc())
                 continue
-            finally:
-                elm.clear(keep_tail=True)
 
     def handle_atom(self, evt):
         """

@@ -72,7 +72,7 @@ class TAKUser(Detail):
         ret = TAKUser(elm)
         ret.uid = uid
 
-        for d_elm in elm.iterchildren():
+        for d_elm in list(elm):
             if d_elm.tag == "takv":
                 ret.device = TAKDevice.from_elm(d_elm)
             elif d_elm.tag == "contact":
