@@ -2,6 +2,11 @@
 
 taky - A simple COT server for ATAK
 
+This is the [layertwo](https://github.com/layertwo/taky) production fork of
+[tkuester/taky](https://github.com/tkuester/taky). It addresses upstream stagnation by fixing the
+XML parser memory leak, hardening the stream framer, modernizing the packaging, and containerizing
+properly.
+
 ![python](https://img.shields.io/badge/python-3.11%2B-blue)
 ![CI](https://github.com/layertwo/taky/actions/workflows/python-tests.yml/badge.svg)
 ![Coverage](https://raw.githubusercontent.com/layertwo/taky/python-coverage-comment-action-data/badge.svg)
@@ -11,14 +16,14 @@ taky - A simple COT server for ATAK
  * Designed with security in mind!
    * First class SSL support with client keys!
    * Data Package Server requires client keys!
-   * Some design consideration for XML security!
+   * XXE protection via defusedxml -- no raw lxml exposure!
    * Does not require root to run!
 
  * Light weight COT Router and Data Package Server
    * Only ~2k SLOC for the whole shebang!
    * Supports multiple ATAK clients simultaneously! You can see them on the map!
    * Actually somewhat decent CoT routing, with Marti support!
-   * A hacked up XML parser written by someone who barely understands XML!
+   * Hardened stream framer that handles partial reads and malformed XML without corrupting parser state!
    * Advanced Pythonic implementation of CoT model, with only 5 hours of combined
      industry experience in implementing CoT technology!
 
@@ -39,40 +44,42 @@ Looking for an indepth feature comparison?
 
 ## Hardware and Software Requirements
 
- * Python 3.6 or greater
- * lxml (BSD)
- * dateutil (Apache 2.0 / BSD 3-clause)
+ * Python 3.11 or greater
+ * defusedxml 0.7.1 (MIT)
+ * python-dateutil (Apache 2.0 / BSD 3-clause)
  * flask (BSD 3-clause)
  * cryptography (Apache 2.0 / BSD 3-clause / PSF)
  * gunicorn (MIT)
  * redis (MIT)
 
-This application was developed with Python 3.8 on Ubuntu 20.04, and tested with
-ATAK v4.2.0.4 and WinTAK. It is now in a beta state, and has even been tested
-on a CentOS 8 docker image! As the package is available on pip, it should run
-on most modern linux distros and docker containers!
+This fork is developed and tested with Python 3.11+ on modern ATAK, WinTAK, and iTAK clients. The
+package is available on pip and should run on most modern Linux distros and Docker containers.
 
-taky has minimal hardware requirements, and runs comfortably on small VPS's,
-embedded systems, and old desktops. Many users have reported successful usage
-on older models of RaspberryPi and the smallest Digital Ocean droplets. If you
-have at least 128 MB of RAM free, you should be able to run taky just fine
-with up to 100 clients.
+taky has minimal hardware requirements, and runs comfortably on small VPS's, embedded systems, and
+old desktops. Many users have reported successful usage on older models of RaspberryPi and the
+smallest Digital Ocean droplets. If you have at least 128 MB of RAM free, you should be able to run
+taky just fine with up to 100 clients.
 
 ## Installation
 
-To install the latest release, install from pip. Open a shell and run:
+To install the latest release from pip:
 
 ```
-$ sudo python3 -m pip install taky
+$ pip install taky
 ```
 
-If you prefer the develoment release (not always stable), you can install it
-from source.
+To install from source (development build):
 
 ```
-$ git clone https://github.com/tkuester/taky
+$ git clone https://github.com/layertwo/taky
 $ cd taky
-taky $ python3 setup.py install
+$ pip install .
+```
+
+For a development install with test and lint tooling:
+
+```
+$ pip install -e ".[dev]"
 ```
 
 ## Usage
@@ -95,7 +102,7 @@ optional arguments:
 
 # Run taky on 0.0.0.0:8087
 $ taky
-INFO:root:taky v0.7
+INFO:root:taky v1.0
 INFO:COTServer:Listening for tcp on :8087
 ```
 
@@ -108,7 +115,7 @@ management. Additionally, there is no tie in to operating systems. This should
 be just as easy to setup on Fedora as it is on Ubuntu -- though the
 instructions have been written for Ubuntu.
 
-See the README_QUICKSTART.md guide in the `/doc` folder to get up and running!
+See the README_QUICKSTART.md guide in the `doc/` folder to get up and running!
 For more advanced setups, look at the README_DEPLOYMENT.md file!
 
 ## Development Status
@@ -121,32 +128,31 @@ outside, and we're tentatively calling it a unicorn. Users have reported that
 messages without complaint, and even found taky deployments in the field with
 coalition forces!
 
-The COT server is the most mature part of the codebase. While some of the more
-esoteric configurations have not been tested, the standard SSL setup seems to
-be rather solid, and performs well with heavy loads. That being said, there is
-a known memory leak with the XML parser that hasn't been resolved.
+The COT server is the most mature part of the codebase. The layertwo fork has
+addressed several stability concerns from the original:
+
+ * The XML parser memory leak has been resolved by replacing lxml with
+   defusedxml + stdlib ElementTree. Memory growth under sustained load is
+   now negligible.
+ * The stream framer has been hardened to handle partial reads, framing
+   edge cases, and malformed XML without corrupting server state.
+ * Packaging has been modernized: pyproject.toml, ruff, pytest, and
+   pytest-asyncio have replaced the old setup.py / tox / unittest stack.
 
 The Data Package server (DPS) is starting to mature, but has not been as
 extensively tested. Simple client-to-client and client-to-server transfers seem
 to work well, although some features like Video and posting tracks have not
 been implemented yet.
 
-All said and done, `taky` is experimental software written as a hobby. You are
-free to use it as you see fit, but please take into serious consideration
-various failure modes, and craft contingency plans if the service fails,
-especially if life, wellbeing, or safety are on the line.
+All said and done, `taky` is experimental software. You are free to use it as
+you see fit, but please take into serious consideration various failure modes,
+and craft contingency plans if the service fails, especially if life, wellbeing,
+or safety are on the line.
 
 Feel free to checkout the
-[milestones](https://github.com/tkuester/taky/milestones) page to see what is
+[milestones](https://github.com/layertwo/taky/milestones) page to see what is
 planned for the next version of taky! Pull requests and issues are welcome!
 
-### Known Issues
-
-At this time, there is one known issue with taky: a memory leak caused by the
-XML parser library. Over several days, the memory usage in `taky` will balloon
-to excessive size, potentially causing instability. This issue will likely not
-be resolved unless LXML writes a fix for their parser.
-
 <p align="center">
-  <img src="https://raw.githubusercontent.com/tkuester/taky/main/doc/taky.png" alt="taky logo" width="200" />
+  <img src="https://raw.githubusercontent.com/layertwo/taky/main/doc/taky.png" alt="taky logo" width="200" />
 </p>
