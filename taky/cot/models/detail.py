@@ -1,16 +1,18 @@
+from dataclasses import dataclass
+
 from taky.cot.models.errors import UnmarshalError
 
 
+@dataclass(frozen=True, repr=False)
 class Detail:
     """
     A simple class to keep track of the Detail element
     """
 
-    def __init__(self, elm):
-        self.elm = elm
+    elm: object = None  # xml.etree.ElementTree.Element | None
 
     def __repr__(self):
-        "<GenericDetail>"
+        return "<GenericDetail>"
 
     @staticmethod
     def is_type(tags):  # pylint: disable=unused-argument
@@ -59,12 +61,12 @@ class Detail:
         """
         return self.elm
 
-    @staticmethod
-    def from_elm(elm):
+    @classmethod
+    def from_elm(cls, elm):
         """
         Build a Detail object from an element, with the event for context
         """
         if elm.tag != "detail":
             raise UnmarshalError("Cannot create Detail from %s" % elm.tag)
 
-        return Detail(elm)
+        return cls(elm)

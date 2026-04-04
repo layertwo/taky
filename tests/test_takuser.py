@@ -1,9 +1,6 @@
 import unittest as ut
-from datetime import datetime as dt
-from datetime import timedelta
 
 import defusedxml.ElementTree as etree
-from dateutil.parser import isoparse
 
 from taky.cot import models
 
@@ -18,22 +15,22 @@ class TAKUserTestcase(ut.TestCase):
         self.answer = elm.find("detail")
 
     def test_as_element(self):
-        tak_u = models.TAKUser(None)
-
-        tak_u.callsign = "JENNY"
-        tak_u.marker = "a"
-        tak_u.group = models.Teams.CYAN
-        tak_u.role = "Team Member"
-
-        tak_u.phone = "800-867-5309"  # hahahaha
-        tak_u.endpoint = "*:-1:stcp"
-
-        tak_u.course = 90.1
-        tak_u.speed = 10.3
-        tak_u.battery = "83"
-
-        tak_u.device = models.TAKDevice(
-            os="Android", version="10", device="Some Device", platform="python unittest"
+        tak_u = models.TAKUser(
+            callsign="JENNY",
+            marker="a",
+            group=models.Teams.CYAN,
+            role="Team Member",
+            phone="800-867-5309",
+            endpoint="*:-1:stcp",
+            course=90.1,
+            speed=10.3,
+            battery="83",
+            device=models.TAKDevice(
+                os="Android",
+                version="10",
+                device="Some Device",
+                platform="python unittest",
+            ),
         )
 
         self.assertTrue(elements_equal(self.answer, tak_u.as_element))

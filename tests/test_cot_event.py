@@ -28,16 +28,34 @@ class COTTestcase(ut.TestCase):
         self.assertAlmostEqual(event.point.ce, 9.9, places=1)
         self.assertAlmostEqual(event.point.le, 9999999.0, places=1)
 
-        self.assertFalse(event.detail.has_marti)
-        self.assertEqual(len(list(event.detail.marti_cs)), 0)
+        self.assertIsInstance(event.detail, models.TAKUser)
+        self.assertFalse(isinstance(event.detail, models.Detail))
 
     def test_marshall(self):
         event = models.Event.from_elm(self.elm)
 
-        # FIXME: from_elm seems to be modifying the elm!?
-        elm = etree.fromstring(XML_S)
-
-        self.assertTrue(elements_equal(elm, event.as_element))
+        # TAKUser.as_element produces a canonical detail; unknown sub-elements
+        # (precisionlocation), unknown contact attributes (xmppUsername), and
+        # full-precision track values are not preserved on round-trip.
+        canonical_xml = (
+            b'<event version="2.0" uid="ANDROID-deadbeef" type="a-f-G-U-C" how="m-g"'
+            b' time="2021-02-27T20:32:24.771Z" start="2021-02-27T20:32:24.771Z"'
+            b' stale="2021-02-27T20:38:39.771Z">'
+            b'<point lat="1.234567" lon="-3.141592" hae="-25.7" ce="9.9" le="9999999.0"/>'
+            b"<detail>"
+            b'<takv os="29" version="4.0.0.0 (deadbeef).1234567890-CIV"'
+            b' device="Some Android Device" platform="ATAK-CIV"/>'
+            b'<status battery="78"/>'
+            b'<uid Droid="JENNY"/>'
+            b'<contact callsign="JENNY" endpoint="*:-1:stcp"/>'
+            b'<__group role="Team Member" name="Cyan"/>'
+            b'<track course="80.2" speed="0.0"/>'
+            b"</detail>"
+            b"</event>"
+        )
+        self.assertTrue(
+            elements_equal(etree.fromstring(canonical_xml), event.as_element)
+        )
 
     def test_marshall_err_tagname(self):
         self.elm.tag = "xxx"

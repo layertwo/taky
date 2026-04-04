@@ -1,4 +1,5 @@
 import xml.etree.ElementTree as etree
+from dataclasses import dataclass, field
 from datetime import datetime as dt
 
 from dateutil.parser import isoparse
@@ -10,27 +11,17 @@ from taky.cot.models.point import Point
 from taky.cot.models.takuser import TAKUser
 
 
+@dataclass(frozen=True, repr=False)
 class Event:
-    def __init__(
-        self,
-        uid=None,
-        etype=None,
-        how=None,
-        time=None,
-        start=None,
-        stale=None,
-        version="2.0",
-    ):
-        self.version = version
-        self.uid = uid
-        self.etype = etype
-        self.how = how
-        self.time = time
-        self.start = start
-        self.stale = stale
-
-        self.point = Point()
-        self.detail = None
+    uid: str | None = None
+    etype: str | None = None
+    how: str | None = None
+    time: dt | None = None
+    start: dt | None = None
+    stale: dt | None = None
+    version: str = "2.0"
+    point: Point = field(default_factory=Point)
+    detail: Detail | GeoChat | TAKUser | None = None
 
     def __repr__(self):
         return '<Event uid="%s" etype="%s" time="%s">' % (
@@ -43,8 +34,8 @@ class Event:
     def persist_ttl(self):
         return round((self.stale - dt.utcnow()).total_seconds())
 
-    @staticmethod
-    def from_elm(elm):
+    @classmethod
+    def from_elm(cls, elm):
         if elm.tag != "event":
             raise UnmarshalError("Cannot create Event from %s" % elm.tag)
 
@@ -55,41 +46,46 @@ class Event:
         except (TypeError, ValueError) as exc:
             raise UnmarshalError("Date parsing error") from exc
 
-        ret = Event(
-            version=elm.get("version"),
-            uid=elm.get("uid"),
-            etype=elm.get("type"),
-            how=elm.get("how"),
-            time=time,
-            start=start,
-            stale=stale,
-        )
+        uid = elm.get("uid")
+        etype = elm.get("type")
 
-        if ret.uid is None:
+        if uid is None:
             raise UnmarshalError("Event must have 'uid' attribute")
-        if ret.etype is None:
+        if etype is None:
             raise UnmarshalError("Event must have 'type' attribute")
 
+        point = Point()
+        detail = None
         child = None
         try:
             for child in list(elm):
                 if child.tag == "point":
-                    ret.point = Point.from_elm(child)
+                    point = Point.from_elm(child)
                 elif child.tag == "detail":
                     d_tags = set([d_elm.tag for d_elm in list(child)])
                     if TAKUser.is_type(d_tags):
-                        ret.detail = TAKUser.from_elm(child, uid=ret.uid)
+                        detail = TAKUser.from_elm(child, uid=uid)
                     elif GeoChat.is_type(d_tags):
-                        ret.detail = GeoChat.from_elm(child)
+                        detail = GeoChat.from_elm(child)
                     else:
-                        ret.detail = Detail.from_elm(child)
+                        detail = Detail.from_elm(child)
         except (TypeError, ValueError, AttributeError) as exc:
             if child is not None:
                 raise UnmarshalError(f"Issue parsing {child.tag}") from exc
             else:
                 raise UnmarshalError("Issue parsing children") from exc
 
-        return ret
+        return cls(
+            version=elm.get("version"),
+            uid=uid,
+            etype=etype,
+            how=elm.get("how"),
+            time=time,
+            start=start,
+            stale=stale,
+            point=point,
+            detail=detail,
+        )
 
     @property
     def as_element(self):

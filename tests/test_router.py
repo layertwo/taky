@@ -82,17 +82,16 @@ class RouterTestcase(ut.TestCase):
         self.router.client_connect(self.tk1)
         self.tk1.feed(self.tk1_ident_msg)
 
-        gc = models.GeoChat(None)
-        gc.src_cs = "TESTCASE"
-        gc.src_uid = "ANDROID-cafebabe"
-        gc.src_marker = "a-f-G-U-C"
-
-        gc.dst_uid = "ANDROID-deadbeef"
-        gc.chatroom = "JENNY"
-        gc.chat_parent = "RootContactGroup"
-
-        gc.message = "Hello world!"
-        gc.message_ts = dt.utcnow()
+        gc = models.GeoChat(
+            src_cs="TESTCASE",
+            src_uid="ANDROID-cafebabe",
+            src_marker="a-f-G-U-C",
+            dst_uid="ANDROID-deadbeef",
+            chatroom="JENNY",
+            chat_parent="RootContactGroup",
+            message="Hello world!",
+            message_ts=dt.utcnow(),
+        )
 
         evt = models.Event(
             uid="GeoChat.ANDROID-deadbeef.TESTCASE.563040b9-2ac9-4af3-9e01-4cb2b05d98ea",
@@ -101,8 +100,8 @@ class RouterTestcase(ut.TestCase):
             time=dt.utcnow(),
             start=dt.utcnow(),
             stale=dt.utcnow() + timedelta(1000),
+            detail=gc,
         )
-        evt.detail = gc
 
         self.router.route(None, evt)
 
