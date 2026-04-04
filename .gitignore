@@ -16,6 +16,9 @@ htmlcov
 # Worktrees
 .worktrees
 
+# GSD planning artifacts
+.planning/
+
 # Grief
 *.crt
 *.key
