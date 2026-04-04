@@ -1,6 +1,8 @@
 import xml.etree.ElementTree as etree
+from dataclasses import dataclass
 
 
+@dataclass(frozen=True, repr=False)
 class Point:
     """An object representing the CoT Point
 
@@ -13,12 +15,11 @@ class Point:
     All other units are in meters.
     """
 
-    def __init__(self, lat=0.0, lon=0.0, hae=0.0, ce=9999999.0, le=9999999.0):
-        self.lat = lat
-        self.lon = lon
-        self.hae = hae
-        self.ce = ce  # pylint: disable=invalid-name
-        self.le = le  # pylint: disable=invalid-name
+    lat: float = 0.0
+    lon: float = 0.0
+    hae: float = 0.0
+    ce: float = 9999999.0  # pylint: disable=invalid-name
+    le: float = 9999999.0  # pylint: disable=invalid-name
 
     @property
     def coords(self):
@@ -32,9 +33,9 @@ class Point:
             self.ce,
         )
 
-    @staticmethod
-    def from_elm(elm):
-        return Point(
+    @classmethod
+    def from_elm(cls, elm):
+        return cls(
             lat=float(elm.get("lat")),
             lon=float(elm.get("lon")),
             hae=float(elm.get("hae")),
@@ -50,5 +51,4 @@ class Point:
         ret.set("hae", "%.1f" % self.hae)
         ret.set("ce", "%.1f" % self.ce)
         ret.set("le", "%.1f" % self.le)
-
         return ret
