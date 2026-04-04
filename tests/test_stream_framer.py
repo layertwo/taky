@@ -1,11 +1,7 @@
 import pytest
-import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as etree
 
 from taky.util.stream_framer import StreamFramer
-
-# ---------------------------------------------------------------------------
-# Ported from tests/test_xmldeclstrip.py (D-07)
-# ---------------------------------------------------------------------------
 
 
 def test_single_message_with_decl():
@@ -15,7 +11,7 @@ def test_single_message_with_decl():
     frames += framer.feed(b'<event data="stuff here" />')
 
     assert len(frames) == 1
-    elm = ET.fromstring(frames[0])
+    elm = etree.fromstring(frames[0])
     assert elm.tag == "event"
     assert elm.get("data") == "stuff here"
     assert not frames[0].startswith(b"<?xml")
@@ -29,7 +25,7 @@ def test_split_decl_mid_tag():
     frames += framer.feed(b'<event data="stuff here" />')
 
     assert len(frames) == 1
-    elm = ET.fromstring(frames[0])
+    elm = etree.fromstring(frames[0])
     assert elm.tag == "event"
 
 
@@ -41,7 +37,7 @@ def test_split_decl_before_close():
     frames += framer.feed(b'<event data="stuff here" />')
 
     assert len(frames) == 1
-    elm = ET.fromstring(frames[0])
+    elm = etree.fromstring(frames[0])
     assert elm.tag == "event"
 
 
@@ -55,7 +51,7 @@ def test_two_messages_batched():
 
     assert len(frames) == 2
     for frame in frames:
-        elm = ET.fromstring(frame)
+        elm = etree.fromstring(frame)
         assert elm.tag == "event"
 
 
@@ -67,7 +63,7 @@ def test_split_message_body():
     frames += framer.feed(b' here" />')
 
     assert len(frames) == 1
-    elm = ET.fromstring(frames[0])
+    elm = etree.fromstring(frames[0])
     assert elm.tag == "event"
     assert elm.get("data") == "stuff here"
 
@@ -88,7 +84,7 @@ def test_well_formed_single():
     frames = framer.feed(data)
 
     assert len(frames) == 1
-    elm = ET.fromstring(frames[0])
+    elm = etree.fromstring(frames[0])
     assert elm.tag == "event"
     assert elm.get("uid") == "ANDROID-abc"
 
@@ -101,7 +97,7 @@ def test_multi_message_batch():
 
     assert len(frames) == 2
     for frame in frames:
-        elm = ET.fromstring(frame)
+        elm = etree.fromstring(frame)
         assert elm.tag == "event"
 
 
@@ -118,8 +114,8 @@ def test_truncated_recovery():
     frames += framer.feed(msg1[half:] + msg2)
     assert len(frames) == 2
 
-    elm0 = ET.fromstring(frames[0])
-    elm1 = ET.fromstring(frames[1])
+    elm0 = etree.fromstring(frames[0])
+    elm1 = etree.fromstring(frames[1])
     assert elm0.get("uid") == "ANDROID-1"
     assert elm1.get("uid") == "ANDROID-2"
 
@@ -157,7 +153,7 @@ def test_oversized_frame_guard():
     # After reset, a well-formed message should be framed correctly
     frames = framer.feed(b'<event uid="ok"/>')
     assert len(frames) == 1
-    elm = ET.fromstring(frames[0])
+    elm = etree.fromstring(frames[0])
     assert elm.get("uid") == "ok"
 
 
@@ -167,7 +163,7 @@ def test_self_closing_event():
     frames = framer.feed(b'<event uid="takPing" type="t-x-c-t" />')
 
     assert len(frames) == 1
-    elm = ET.fromstring(frames[0])
+    elm = etree.fromstring(frames[0])
     assert elm.tag == "event"
     assert elm.get("uid") == "takPing"
 
@@ -182,7 +178,7 @@ def test_xml_decl_stripped():
         not frames[0].strip().startswith(b"<?xml")
     ), "XML declaration must be stripped"
     # Frame must still be parseable
-    elm = ET.fromstring(frames[0])
+    elm = etree.fromstring(frames[0])
     assert elm.tag == "event"
 
 
@@ -193,7 +189,7 @@ def test_whitespace_between_events():
 
     assert len(frames) == 2
     for frame in frames:
-        elm = ET.fromstring(frame)
+        elm = etree.fromstring(frame)
         assert elm.tag == "event"
 
 
@@ -208,5 +204,5 @@ def test_multiple_sequential_feeds_accumulate():
     frames += framer.feed(b"</event>")
 
     assert len(frames) == 1
-    elm = ET.fromstring(frames[0])
+    elm = etree.fromstring(frames[0])
     assert elm.get("uid") == "multi"

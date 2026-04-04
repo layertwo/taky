@@ -1,6 +1,7 @@
 import os
+import xml.etree.ElementTree as etree
+import defusedxml.ElementTree as defused_et
 
-from lxml import etree
 from flask import request
 from flask.wrappers import Response
 from werkzeug.utils import secure_filename
@@ -15,11 +16,9 @@ def marti_video_upload():
     Accepts an XML document of video feeds, and saves them
     to the video feed directory
     """
-    parser = etree.XMLParser(resolve_entities=True)
     try:
-        parser.feed(request.data)
-        elm = parser.close()
-    except etree.XMLSyntaxError:
+        elm = defused_et.fromstring(request.data)
+    except etree.ParseError:
         return "Malformed XML", 400
 
     if elm.tag != "videoConnections":
@@ -32,7 +31,7 @@ def marti_video_upload():
         except OSError:
             return "Sever error", 500
 
-    for feed in elm.iterchildren():
+    for feed in elm:
         if feed.tag != "feed":
             return "Invalid XML document", 400
 
@@ -44,7 +43,9 @@ def marti_video_upload():
 
         try:
             with open(os.path.join(feeds_dir, path), "wb") as feed_fp:
-                feed_fp.write(etree.tostring(feed, xml_declaration=True))
+                feed_fp.write(
+                    etree.tostring(feed, xml_declaration=True, encoding="utf-8")
+                )
         except OSError:
             return "Server error", 500
 
@@ -63,10 +64,8 @@ def marti_video_index():
     # If the directory doesn't exist, return empty
     feeds_dir = os.path.join(app.config["UPLOAD_PATH"], "video_feed")
     if not os.path.exists(feeds_dir):
-        return etree.tostring(doc, xml_declaration=True)
+        return etree.tostring(doc, xml_declaration=True, encoding="utf-8")
 
-    # Get ready to parse XML files
-    parser = etree.XMLParser(resolve_entities=True)
     for fname in os.listdir(feeds_dir):
         fname = os.path.join(feeds_dir, fname)
         if not os.path.isfile(fname):
@@ -78,15 +77,13 @@ def marti_video_index():
         try:
             with open(fname, "rb") as feed_fp:
                 xml = feed_fp.read()
-                parser.feed(xml)
-                elm = parser.close()
+                elm = defused_et.fromstring(xml)
 
-                # Basic sanity check
                 if elm.tag != "feed":
                     continue
 
                 doc.append(elm)
-        except etree.XMLSyntaxError as exc:
+        except etree.ParseError as exc:
             print(exc)
             continue
         except OSError as exc:
@@ -94,4 +91,6 @@ def marti_video_index():
             continue
 
     # Return the XML document
-    return Response(etree.tostring(doc, xml_declaration=True), mimetype="text/xml")
+    return Response(
+        etree.tostring(doc, xml_declaration=True, encoding="utf-8"), mimetype="text/xml"
+    )

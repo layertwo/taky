@@ -1,4 +1,4 @@
-from lxml import etree
+import xml.etree.ElementTree as etree
 
 from .errors import UnmarshalError
 from .detail import Detail

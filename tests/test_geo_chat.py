@@ -1,6 +1,6 @@
 import unittest as ut
 
-from lxml import etree
+import defusedxml.ElementTree as etree
 
 from taky.cot import models
 

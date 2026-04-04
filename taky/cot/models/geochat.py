@@ -1,6 +1,6 @@
 import enum
 
-from lxml import etree
+import xml.etree.ElementTree as etree
 from dateutil.parser import isoparse
 
 from .errors import UnmarshalError
