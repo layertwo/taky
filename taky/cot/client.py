@@ -9,8 +9,6 @@ import ssl
 import logging
 import traceback
 
-import xml.etree.ElementTree as stdlib_et
-
 import defusedxml.ElementTree as defused_et
 from lxml import etree
 
@@ -123,7 +121,7 @@ class SocketClient:
                 return
 
             self.feed(data)
-        except stdlib_et.ParseError as exc:
+        except defused_et.ParseError as exc:
             self.disconnect("XML Syntax Error")
             self.lgr.debug("XML Syntax Error: %s", self, exc_info=exc)
         except BlockingIOError:
@@ -306,7 +304,7 @@ class TAKClient:
 
                 self.route(self, evt)
                 self.log_event(evt)
-            except stdlib_et.ParseError as exc:
+            except defused_et.ParseError as exc:
                 self.lgr.debug("Unable to parse XML frame: %s", exc, exc_info=exc)
                 continue
             except models.UnmarshalError as exc:

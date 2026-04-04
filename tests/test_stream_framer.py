@@ -3,7 +3,6 @@ import xml.etree.ElementTree as ET
 
 from taky.util.stream_framer import StreamFramer
 
-
 # ---------------------------------------------------------------------------
 # Ported from tests/test_xmldeclstrip.py (D-07)
 # ---------------------------------------------------------------------------
@@ -179,7 +178,9 @@ def test_xml_decl_stripped():
     frames = framer.feed(b"<?xml version='1.0' encoding='UTF-8'?><event uid='x'/>")
 
     assert len(frames) == 1
-    assert not frames[0].strip().startswith(b"<?xml"), "XML declaration must be stripped"
+    assert (
+        not frames[0].strip().startswith(b"<?xml")
+    ), "XML declaration must be stripped"
     # Frame must still be parseable
     elm = ET.fromstring(frames[0])
     assert elm.tag == "event"

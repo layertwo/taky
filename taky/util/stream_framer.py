@@ -136,7 +136,9 @@ class StreamFramer:
                             self._depth -= 1
                         else:
                             # Closing tag at depth 0 is malformed — discard and reset
-                            self.lgr.debug("Unexpected closing tag at depth 0 -- discarding")
+                            self.lgr.debug(
+                                "Unexpected closing tag at depth 0 -- discarding"
+                            )
                             self._reset_frame_state()
                             continue
                     elif self._saw_slash:
