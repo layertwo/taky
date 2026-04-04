@@ -1,7 +1,6 @@
 import xml.etree.ElementTree as etree
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
-from .detail import Detail
 from .errors import UnmarshalError
 from .teams import Teams
 
@@ -40,25 +39,20 @@ class TAKDevice:
         return ret
 
 
-class TAKUser(Detail):
-    def __init__(self, elm):
-        super().__init__(elm)
-
-        self.uid = None
-        self.callsign = None
-        self.marker = None
-        self.group = None
-        self.role = None
-
-        self.phone = None
-        self.xmpp = None
-        self.endpoint = None
-
-        self.course = None
-        self.speed = None
-
-        self.battery = None
-        self.device = TAKDevice()
+@dataclass(frozen=True, repr=False)
+class TAKUser:
+    uid: str | None = None
+    callsign: str | None = None
+    marker: str | None = None
+    group: Teams | None = None
+    role: str | None = None
+    phone: str | None = None
+    xmpp: str | None = None
+    endpoint: str | None = None
+    course: float | None = None
+    speed: float | None = None
+    battery: str | None = None
+    device: TAKDevice = field(default_factory=TAKDevice)
 
     def __repr__(self):
         return f"<TAKUser callsign={self.callsign}, group={self.group}>"
@@ -67,37 +61,52 @@ class TAKUser(Detail):
     def is_type(tags):
         return TAKUSER_TAGS.issubset(tags)
 
-    @staticmethod
-    def from_elm(elm, uid):
-        ret = TAKUser(elm)
-        ret.uid = uid
+    @classmethod
+    def from_elm(cls, elm, uid):
+        device = TAKDevice()
+        callsign = None
+        phone = None
+        endpoint = None
+        group = None
+        role = None
+        battery = None
+        course = None
+        speed = None
 
         for d_elm in list(elm):
             if d_elm.tag == "takv":
-                ret.device = TAKDevice.from_elm(d_elm)
+                device = TAKDevice.from_elm(d_elm)
             elif d_elm.tag == "contact":
-                ret.callsign = d_elm.get("callsign")
-                ret.phone = d_elm.get("phone")
-                ret.endpoint = d_elm.get("endpoint")
+                callsign = d_elm.get("callsign")
+                phone = d_elm.get("phone")
+                endpoint = d_elm.get("endpoint")
             elif d_elm.tag == "__group":
                 try:
-                    ret.group = Teams(d_elm.get("name"))
+                    group = Teams(d_elm.get("name"))
                 except ValueError:
-                    ret.group = Teams.UNKNOWN
-                ret.role = d_elm.get("role")
+                    group = Teams.UNKNOWN
+                role = d_elm.get("role")
             elif d_elm.tag == "status":
-                ret.battery = d_elm.get("battery")
+                battery = d_elm.get("battery")
             elif d_elm.tag == "track":
-                ret.course = float(d_elm.get("course"))
-                ret.speed = float(d_elm.get("speed"))
+                course = float(d_elm.get("course"))
+                speed = float(d_elm.get("speed"))
 
-        return ret
+        return cls(
+            uid=uid,
+            callsign=callsign,
+            phone=phone,
+            endpoint=endpoint,
+            group=group,
+            role=role,
+            battery=battery,
+            course=course,
+            speed=speed,
+            device=device,
+        )
 
     @property
     def as_element(self):
-        if self.elm is not None:
-            return self.elm
-
         if None in [self.device, self.callsign, self.group, self.role, self.endpoint]:
             raise ValueError("Missing fields, unable to convert to XML element")
 
@@ -142,7 +151,7 @@ class TAKUser(Detail):
         )
         detail.append(group)
 
-        if self.course and self.speed:
+        if self.course is not None and self.speed is not None:
             track = etree.Element(
                 "track",
                 attrib={
