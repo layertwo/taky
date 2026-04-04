@@ -33,7 +33,8 @@ UDP Like Commands
 from datetime import datetime as dt
 import logging
 
-from lxml import etree
+import xml.etree.ElementTree as etree
+import defusedxml.ElementTree as defused_et
 import redis
 
 from taky.config import app_config as config
@@ -266,12 +267,10 @@ class RedisPersistence(BasePersistence):
             if xml is None:
                 return None
 
-            parser = etree.XMLParser(resolve_entities=False)
-            parser.feed(xml)
-            elm = parser.close()
+            elm = defused_et.fromstring(xml)
 
             evt = models.Event.from_elm(elm)
-        except (models.UnmarshalError, etree.XMLSyntaxError) as exc:
+        except (models.UnmarshalError, etree.ParseError) as exc:
             self.lgr.warning("Unable to parse Event from persistence store: %s", exc)
             purge = True
         except redis.ResponseError as exc:

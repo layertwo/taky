@@ -4,7 +4,7 @@ import unittest as ut
 from datetime import datetime as dt
 from datetime import timedelta
 
-from lxml import etree
+import xml.etree.ElementTree as etree
 
 from taky import cot
 from taky.config import load_config, app_config

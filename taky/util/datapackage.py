@@ -1,6 +1,16 @@
 import os
+import xml.etree.ElementTree as etree
 
-from lxml import etree
+_STANDALONE_DECL = b"<?xml version='1.0' encoding='utf-8' standalone='yes'?>\n"
+
+
+def _tostring_standalone(elm):
+    """Serialize element with standalone XML declaration (stdlib ET lacks standalone param)."""
+    etree.indent(elm)
+    body = etree.tostring(elm, encoding="utf-8")
+    if body.startswith(b"<?xml"):
+        body = body[body.index(b"?>") + 2 :].lstrip()
+    return _STANDALONE_DECL + body
 
 
 def build_pref(pref_fp, prefs):
@@ -40,11 +50,7 @@ def build_pref(pref_fp, prefs):
 
         prefs_xml.append(pref_xml)
 
-    pref_fp.write(
-        etree.tostring(
-            prefs_xml, pretty_print=True, xml_declaration=True, standalone=True
-        )
-    )
+    pref_fp.write(_tostring_standalone(prefs_xml))
 
 
 def build_manifest(man_fp, cfg_params, contents):
@@ -80,4 +86,5 @@ def build_manifest(man_fp, cfg_params, contents):
     mpm.append(cts)
 
     # Write document
-    man_fp.write(etree.tostring(mpm, pretty_print=True))
+    etree.indent(mpm)
+    man_fp.write(etree.tostring(mpm))

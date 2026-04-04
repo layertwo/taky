@@ -9,8 +9,8 @@ import ssl
 import logging
 import traceback
 
+import xml.etree.ElementTree as etree
 import defusedxml.ElementTree as defused_et
-from lxml import etree
 
 from taky.config import app_config
 from taky.util import StreamFramer
@@ -261,7 +261,8 @@ class TAKClient:
                 taky_err.append(etree.Comment(_exc))
                 elm.append(taky_err)
 
-            doc = etree.tostring(elm, pretty_print=True).decode()
+            etree.indent(elm)
+            doc = etree.tostring(elm, encoding="unicode")
         except Exception as exc:  # pylint: disable=broad-except
             self.lgr.warning("Unable to build packet string for logfile", exc_info=exc)
             return

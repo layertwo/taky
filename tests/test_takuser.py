@@ -2,7 +2,7 @@ import unittest as ut
 from datetime import datetime as dt
 from datetime import timedelta
 
-from lxml import etree
+import defusedxml.ElementTree as etree
 from dateutil.parser import isoparse
 
 from taky.cot import models
