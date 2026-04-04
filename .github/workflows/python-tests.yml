@@ -38,12 +38,14 @@ jobs:
       - name: Run tests with coverage
         run: |
           pytest
+        env:
+          COVERAGE_FILE: .coverage.${{ matrix.python-version }}
 
       - name: Store coverage file
         uses: actions/upload-artifact@v7
         with:
           name: coverage-${{ matrix.python-version }}
-          path: .coverage
+          path: .coverage.${{ matrix.python-version }}
           include-hidden-files: true
 
   coverage:
