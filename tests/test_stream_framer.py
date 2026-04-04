@@ -126,16 +126,23 @@ def test_truncated_recovery():
 
 
 def test_attribute_value_false_boundary():
-    """STRM-02: </event> inside an attribute value must not trigger a false frame split."""
+    """STRM-02: </event> inside an attribute value must not trigger a false frame split.
+
+    Note: The payload uses a literal '<' inside an attribute value which is not
+    well-formed XML (requires &lt; encoding). The framer must not split on the
+    '</event>' substring inside the quoted value — it must wait for the real
+    closing tag at depth 0. We verify framing correctness only (no XML parse).
+    """
     framer = StreamFramer()
-    # The </event> embedded in the uid attribute must NOT cause a split
+    # The </event> embedded in the uid attribute (between double quotes) must
+    # NOT cause a frame boundary — the framer must suppress < and > inside quotes.
     data = b'<event uid="</event>"><point/></event>'
     frames = framer.feed(data)
 
     assert len(frames) == 1, f"Expected 1 frame, got {len(frames)}"
-    # Frame should contain the full element — verify it's parseable
-    elm = ET.fromstring(frames[0])
-    assert elm.tag == "event"
+    # Verify the full raw bytes are in the one frame (not truncated)
+    assert b"</event>" in frames[0]
+    assert frames[0].endswith(b"</event>")
 
 
 def test_oversized_frame_guard():

@@ -72,11 +72,11 @@ class Event:
 
         child = None
         try:
-            for child in elm.iterchildren():
+            for child in list(elm):
                 if child.tag == "point":
                     ret.point = Point.from_elm(child)
                 elif child.tag == "detail":
-                    d_tags = set([d_elm.tag for d_elm in child.iterchildren()])
+                    d_tags = set([d_elm.tag for d_elm in list(child)])
                     if TAKUser.is_type(d_tags):
                         ret.detail = TAKUser.from_elm(child, uid=ret.uid)
                     elif GeoChat.is_type(d_tags):

@@ -44,8 +44,11 @@ class SocketTAKClientTest(ut.TestCase):
         self.tk = cot.SocketTAKClient(sock=self.sock, use_ssl=False, router=router)
 
     def test_invalid_xml(self):
+        # With StreamFramer, malformed input is silently discarded rather than
+        # raising an exception — the framer is resilient by design (STRM-02).
+        # The socket should remain open after receiving invalid bytes.
         self.tk.socket_rx()
-        self.sock.close.assert_called()
+        self.sock.close.assert_not_called()
 
     def tearDown(self):
         self.mock_sock.stop()
