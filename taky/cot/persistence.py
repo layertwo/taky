@@ -276,7 +276,7 @@ class RedisPersistence(BasePersistence):
         except redis.ResponseError as exc:
             self.lgr.warning("Unable to get Event from persistence store: %s", exc)
             purge = True
-        except redis.ConnectionError as exc:
+        except redis.ConnectionError:
             self._redis_result(False)
             return None
         except Exception as exc:  # pylint: disable=broad-except
@@ -289,7 +289,7 @@ class RedisPersistence(BasePersistence):
             self.lgr.warning("Purging key %s", key)
             try:
                 self.rds.delete(key)
-            except:  # pylint: disable=bare-except
+            except Exception:
                 pass
             return None
 

@@ -11,7 +11,7 @@ from taky.util import anc
 def setup_taky_reg(subp):
     try:
         default_hostname = socket.gethostname()
-    except:  # pylint: disable=bare-except
+    except Exception:
         default_hostname = "taky"
 
     setup = subp.add_parser("setup", help="Setup the taky server")

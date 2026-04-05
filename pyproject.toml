@@ -38,6 +38,8 @@ dev = [
     "coverage==7.13.5",
     "black==26.3.1",
     "isort==8.0.1",
+    "flake8==7.3.0",
+    "Flake8-pyproject==1.2.4",
     "pylint==4.0.5",
     "pre-commit==4.5.1",
 ]
@@ -97,3 +99,33 @@ exclude_lines = [
 line-length = 88
 target-version = ["py311"]
 src = ["taky/", "tests/"]
+
+[tool.flake8]
+max-line-length = 88
+extend-ignore = [
+    "E203",  # whitespace before ':'
+    "E266",  # too many leading '#' for block comment
+    "E501",  # line too long (handled by black)
+    "W503",  # line break before binary operator
+    "W504",  # line break after binary operator
+]
+exclude = [
+    ".git",
+    "__pycache__",
+    "build",
+    "dist",
+    ".venv",
+    "venv",
+    ".eggs",
+    "*.egg-info",
+    ".pytest_cache",
+    ".mypy_cache",
+    ".coverage",
+    "htmlcov",
+]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "C90", # mccabe complexity
+]

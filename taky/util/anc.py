@@ -346,7 +346,7 @@ class CertificateDatabase:
         if isinstance(serial_num, str):
             try:
                 serial_num = int(serial_num, 16)
-            except:
+            except Exception:
                 return None
 
         return self.cert_db_sn.get(serial_num)

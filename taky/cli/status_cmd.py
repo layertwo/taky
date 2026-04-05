@@ -124,7 +124,7 @@ def status(args):
     except (UnicodeDecodeError, json.JSONDecodeError) as exc:
         print(f"ERROR: Invalid data in response: {exc}", file=sys.stderr)
         return 1
-    except FileNotFoundError as exc:
+    except FileNotFoundError:
         print(
             f"ERROR: Unable to connect to mgmt socket: {args.socket}", file=sys.stderr
         )
