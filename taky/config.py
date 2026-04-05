@@ -36,6 +36,9 @@ DEFAULT_CFG = {
         "key_pw": None,
         "cert_db": "/etc/taky/ssl/cert-db.txt",
     },
+    "db": {
+        "url": None,
+    },
 }
 
 
