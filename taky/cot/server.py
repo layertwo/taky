@@ -334,7 +334,7 @@ class COTServer:
         if self.srv:
             try:
                 self.srv.shutdown(socket.SHUT_RDWR)
-            except:  # pylint: disable=bare-except
+            except Exception:
                 pass
             finally:
                 self.srv.close()
@@ -343,7 +343,7 @@ class COTServer:
         if self.mon:
             try:
                 self.mon.shutdown(socket.SHUT_RDWR)
-            except:  # pylint: disable=bare-except
+            except Exception:
                 pass
             finally:
                 self.mon.close()
@@ -356,7 +356,7 @@ class COTServer:
             )
             try:
                 self.mgmt.shutdown(socket.SHUT_RDWR)
-            except:  # pylint: disable=bare-except
+            except Exception:
                 pass
             finally:
                 self.mgmt.close()

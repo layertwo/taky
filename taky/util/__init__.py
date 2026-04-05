@@ -1,5 +1,5 @@
-from . import anc, datapackage
-from .stream_framer import StreamFramer
+from . import anc, datapackage  # noqa: F401
+from .stream_framer import StreamFramer  # noqa: F401
 
 
 def seconds_to_human(sec):

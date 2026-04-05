@@ -44,4 +44,4 @@ except FileNotFoundError:
     pass
 configure_app(app_config)
 
-from taky.dps import views  # pylint: disable=wrong-import-position
+from taky.dps import views  # noqa: F401, E402

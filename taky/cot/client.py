@@ -54,7 +54,7 @@ class SocketClient:
             if addr == "":
                 return ("unix", "")
             return addr
-        except:  # pylint: disable=bare-except
+        except Exception:
             return (None, None)
 
     @property
@@ -155,7 +155,7 @@ class SocketClient:
 
         try:
             self.sock.shutdown(socket.SHUT_RDWR)
-        except:  # pylint: disable=bare-except
+        except Exception:
             pass
         finally:
             self.sock.close()
@@ -210,7 +210,7 @@ class TAKClient:
         if self.cot_fp:
             try:
                 self.cot_fp.close()
-            except:  # pylint: disable=bare-except
+            except Exception:
                 pass
             self.cot_fp = None
 

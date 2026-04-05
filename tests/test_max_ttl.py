@@ -1,5 +1,4 @@
 import os
-import queue
 import unittest as ut
 import xml.etree.ElementTree as etree
 from datetime import datetime as dt
@@ -8,7 +7,6 @@ from unittest import mock
 
 from taky import cot
 from taky.config import app_config, load_config
-from taky.cot import models
 
 from . import XML_S, UnittestTAKClient
 
