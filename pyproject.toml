@@ -46,7 +46,7 @@ dev = [
     "flake8==7.3.0",
     "Flake8-pyproject==1.2.4",
     "pylint==4.0.5",
-    "pre-commit==4.5.1",
+    "pre-commit==4.6.2",
 ]
 
 [project.scripts]
