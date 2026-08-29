@@ -45,7 +45,7 @@ dev = [
     "isort==8.0.1",
     "flake8==7.3.0",
     "Flake8-pyproject==1.2.4",
-    "pylint==4.0.5",
+    "pylint==4.0.8",
     "pre-commit==4.5.1",
 ]
 
